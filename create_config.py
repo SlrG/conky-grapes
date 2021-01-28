@@ -32,7 +32,7 @@ import pathlib
 
 # Inittiating variables
 home = expanduser("~")
-working_dir = home+'/conky/conky-grapes/'
+working_dir = home+'/.conky/conky-grapes/'
 src_lua = working_dir+'rings-v2_tpl'
 dest_lua = working_dir+'rings-v2_gen.lua'
 src_conky = working_dir+'conky_tpl'
@@ -54,6 +54,7 @@ couleurs = {
         'lightred': 'e7646a',
         'green': '1dff22',
         'lightgreen': '64e766',
+        'mintgreen': '92B662',
         'pink': 'd70751',
         'lightpink': 'e78cb7',
         'brown': 'b57131',
@@ -304,20 +305,31 @@ def write_batconf():
 
         log.info('Writing conky BATTERY config in config file')
         if old:
-            new_block = "${font Michroma:size=10}${color0}${goto 296}${voffset 22}BATTERY"
+            new_block = "${font Michroma:size=10}${color0}${goto 296}${voffset 32}BATTERY"
+            new_block += "\n${font}${color1}${goto 270}${voffset -22}${color1}${execi 60 acpi|head -c 12|tail -c 1}"
             new_block += "\n${{font}}${{color0}}${{goto 280}}${{voffset 1}}${{color1}}${{battery_percent {arg}}}%".format(**data)
+            new_block += "\n${font}${color1}${goto 280}${color1}${execi 60 acpi|grep -Po '(?<=(: )).*?(?=, )'}"
+            new_block += "\n${font}${color1}${goto 280}${color1}${battery_time}"
         else:
-            new_block = "${font Michroma:size=10}${color0}${goto 296}${voffset 28}BATTERY"
-            new_block += "\n${{font}}${{color0}}${{goto 280}}${{voffset -4}}${{color1}}${{battery_percent {arg}}}%".format(**data)
+            new_block = "${font Michroma:size=10}${color0}${goto 296}${voffset 38}BATTERY"
+            new_block += "\n${font}${color1}${goto 270}${voffset -22}${color1}${execi 60 acpi|head -c 12|tail -c 1}"
+            new_block += "\n${{font}}${{color0}}${{goto 280}}${{voffset 5}}${{color1}}${{battery_percent {arg}}}%".format(**data)
+            new_block += "\n${font}${color1}${goto 280}${color1}${execi 60 acpi|grep -Po '(?<=(: )).*?(?=, )'}"
+            new_block += "\n${font}${color1}${goto 280}${color1}${battery_time}"
 
         batconf_conky.append(new_block)
         filedata = read_conf(dest_conky)
         filedata = filedata.replace('#{{ BATTERY }}', ''.join(batconf_conky))
-        filedata = filedata.replace('#{{ OS }}', "${font Michroma:bold:size=11}${color0}${voffset 50}${alignc}${execi 3600 awk -F '=' '/PRETTY_NAME/ { print $2 }' /etc/os-release | tr -d '\"'}")
+        write_conf(filedata, dest_conky)
+        new_block = "${font Michroma:bold:size=11}${color0}${goto 150}${voffset 30}${execi 60 cat /etc/issue.net}  ${machine}"
+        new_block += "\n${font}${color1}${goto 220}${voffset -2}${execi 300 "+working_dir+"cgucheck}"
+        filedata = read_conf(dest_conky)
+        filedata = filedata.replace('#{{ OS }}', new_block)
         write_conf(filedata, dest_conky)
     else:
         # adjusting if no battery
-        new_block = "${font Michroma:bold:size=11}${color0}${voffset 90}${alignc}${execi 3600 awk -F '=' '/PRETTY_NAME/ { print $2 }' /etc/os-release | tr -d '\"'}"
+        new_block = "${font Michroma:bold:size=11}${color0}${voffset 90}${alignc}${execi 60 cat /etc/issue.net}  ${machine}"
+        new_block += "\n${font}${color1}${voffset -2}${alignc}${execi 300 "+working_dir+"cgucheck}"
         filedata = read_conf(dest_conky)
         filedata = filedata.replace('#{{ OS }}', new_block)
         write_conf(filedata, dest_conky)
@@ -386,9 +398,9 @@ def write_fsconf_conky(fs):
     """
     conf = []
     if old:
-        voffset = -80
+        voffset = -82
     else:
-        voffset = -81
+        voffset = -83
     fs_max = 3
 
     for cpt in range (len(fs)):
@@ -400,7 +412,7 @@ def write_fsconf_conky(fs):
                 .format(fs[cpt])
                 }
 
-        new_block = "${{goto 70}}${{voffset {voffset}}}{filesys}${{color1}}${{alignr 310}}${{fs_used {filesys}}} / ${{fs_size {filesys}}}\n".format(**data)
+        new_block = "${{goto 60}}${{voffset {voffset}}}{filesys}${{color1}}${{alignr 310}}${{fs_used {filesys}}} / ${{fs_size {filesys}}}\n".format(**data)
         conf.append(new_block)
 
     log.info('adjusting voffset for FS...')
@@ -408,7 +420,7 @@ def write_fsconf_conky(fs):
         adjust = 12 + ((fs_max - len(fs)) *10)
     else:
         adjust = 8 + ((fs_max - len(fs)) *10)
-    new_block = "${{font Michroma:size=10}}${{color0}}${{goto 68}}${{voffset {0}}}FILESYSTEM".format(adjust)
+    new_block = "${{font Michroma:size=10}}${{color0}}${{goto 100}}${{voffset {0}}}FILESYSTEM".format(adjust)
     conf.append(new_block)
 
     log.info('Writing FS conky config in config file')
@@ -526,18 +538,18 @@ def write_diskioconf_conky():
 
     # top io wait processes
     # First line, fixed vertical alignment
-    new_block = "${voffset -130}${goto 378}${font}${color1}${top_io name 1}${alignr 30}${top_io io_write 1}%\n"
+    new_block = "${voffset -123}${goto 378}${font}${color1}${top_io name 1}${alignr -20}${top_io io_write 1}%\n"
     ioconf.append(new_block)
 
     for cpt in range (2,4):
         data = { 'voffset': voffset, 'io': "{}".format(cpt)}
-        new_block = "${{goto 378}}${{voffset {voffset}}}${{color1}}${{top_io name {io}}}${{alignr 30}}${{top_io io_write {io}}}%\n".format(**data)
+        new_block = "${{goto 378}}${{voffset {voffset}}}${{color1}}${{top_io name {io}}}${{alignr -20}}${{top_io io_write {io}}}%\n".format(**data)
         ioconf.append(new_block)
 
     if old:
-        new_block = "${goto 370}${voffset 8}${color1}disk writes${alignr 30}${diskio_write}%\n${goto 370}${color1}disk reads${alignr 30}${diskio_read}%\n${font Michroma:size=10}${color0}${goto 418}${voffset 2}IO WAIT"
+        new_block = "${goto 370}${voffset 8}${color1}disk writes${alignr -20}${diskio_write}%\n${goto 370}${color1}disk reads${alignr -20}${diskio_read}%\n${font Michroma:size=10}${color0}${goto 418}${voffset 2}IO WAIT"
     else:
-        new_block = "${goto 370}${voffset 4}${color1}disk writes${alignr 30}${diskio_write}%\n${goto 370}${color1}disk reads${alignr 30}${diskio_read}%\n${font Michroma:size=10}${color0}${goto 418}${voffset 1}IO WAIT\n"
+        new_block = "${goto 370}${voffset 4}${color1}disk writes${alignr -20}${diskio_write}%\n${goto 370}${color1}disk reads${alignr -20}${diskio_read}%\n${font Michroma:size=10}${color0}${goto 418}${voffset 1}IO WAIT\n"
     ioconf.append(new_block)
 
     log.info('Writing IO conky config in config file')
@@ -608,21 +620,21 @@ def write_memconf_conky():
     # top memory processes
     log.info('Starting Memory config')
     if old:
-        new_block = "${font Michroma:size=10}${color0}${goto 394}${voffset 79}MEMORY\n${font}${goto 324}${voffset -4}${color1}${top_mem name 1}${alignr 40}${top_mem mem 1}%\n"
+        new_block = "${font Michroma:size=10}${color0}${goto 404}${voffset 80}MEMORY\n${font}${goto 324}${voffset -4}${color1}${top_mem name 1}${alignr 35}${top_mem mem 1}%\n"
     else:
-        new_block = "${font Michroma:size=10}${color0}${goto 394}${voffset 59}MEMORY\n${font}${goto 324}${voffset -4}${color1}${top_mem name 1}${alignr 40}${top_mem mem 1}%\n"
+        new_block = "${font Michroma:size=10}${color0}${goto 404}${voffset 60}MEMORY\n${font}${goto 324}${voffset -4}${color1}${top_mem name 1}${alignr 35}${top_mem mem 1}%\n"
 
     memconf.append(new_block)
 
     for cpt in range (2,4):
         data = { 'mem': "{}".format(cpt)}
-        new_block = "${{goto 324}}${{color1}}${{top_mem name {mem}}}${{alignr 40}}${{top_mem mem {mem}}}%\n".format(**data)
+        new_block = "${{goto 324}}${{color1}}${{top_mem name {mem}}}${{alignr 35}}${{top_mem mem {mem}}}%\n".format(**data)
         memconf.append(new_block)
 
     if old:
-        new_block = "${voffset 14}${goto 348}${color1}SWAP${alignr 40}${color1}${swap} / ${color1}${swapmax}\n${voffset 3}${goto 348}${color1}RAM ${alignr 40}${color1}${mem} / ${color1}${memmax}\n"
+        new_block = "${voffset 26}${goto 348}${color1}SWAP${alignr 35}${color1}${swap} / ${color1}${swapmax}\n${voffset 3}${goto 348}${color1}RAM ${alignr 35}${color1}${mem} / ${color1}${memmax}\n"
     else:
-        new_block = "${voffset 8}${goto 348}${color1}SWAP${alignr 40}${color1}${swap} / ${color1}${swapmax}\n${voffset 1}${goto 348}${color1}RAM ${alignr 40}${color1}${mem} / ${color1}${memmax}\n"
+        new_block = "${voffset 20}${goto 348}${color1}SWAP${alignr 35}${color1}${swap} / ${color1}${swapmax}\n${voffset 1}${goto 348}${color1}RAM ${alignr 35}${color1}${mem} / ${color1}${memmax}\n"
     memconf.append(new_block)
     log.info("memconf = {}".format(memconf))
 
@@ -658,7 +670,7 @@ def write_netconf_lua(interface):
         bg_alpha={bg_alpha},
         fg_colour=0x34cdff,
         fg_alpha=0.8,
-        x=290, y=345,
+        x=290, y=335,
         radius={radius},
         thickness={thickness},
         start_angle=180,
@@ -728,11 +740,11 @@ def write_timeconf_conky():
     timeconf = []
 
     # top timeory processes
-    log.info('Starting Memory config')
+    log.info('Starting Time config')
     if old:
-        new_block = "${font Michroma:size=10}${alignr 300}${voffset -40}${color0}${time %a} ${color0}${time %x}\n${font Michroma:size=18}${alignr 318}${color1}${voffset -4}${time %H}:${time %M}"
+        new_block = "${font Michroma:size=10}${alignr 300}${voffset -30}${color0}${time %a} ${color0}${time %x}\n${font Michroma:size=18}${alignr 318}${color1}${voffset -4}${time %H}:${time %M}"
     else:
-        new_block = "${font Michroma:size=10}${alignr 300}${voffset -50}${color0}${time %a} ${color0}${time %x}\n${font Michroma:size=18}${alignr 318}${color1}${voffset -4}${time %H}:${time %M}"
+        new_block = "${font Michroma:size=10}${alignr 300}${voffset -40}${color0}${time %a} ${color0}${time %x}\n${font Michroma:size=18}${alignr 312}${color1}${voffset -4}${time %H}:${time %M}"
 
     timeconf.append(new_block)
 

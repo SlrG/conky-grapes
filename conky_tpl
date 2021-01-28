@@ -38,8 +38,8 @@ conky.config = {
 	maximum_width = 520,
 
 	alignment = 'top_right',
-	gap_x = 20,
-	gap_y = 112,
+	gap_x = 50,
+	gap_y = 70,
 
 -- Graphics settings #
 	draw_shades = false,
@@ -64,7 +64,7 @@ conky.config = {
 --{{ COLOR0 }}
 --{{ COLOR1 }}
 
-	lua_load = '~/conky/conky-grapes/rings-v2_gen.lua',
+	lua_load = '~/.conky/conky-grapes/rings-v2_gen.lua',
 	lua_draw_hook_pre = 'conky_main',
 
     diskio_avg_samples = 2

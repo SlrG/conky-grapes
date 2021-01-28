@@ -1,0 +1,5 @@
+#!/bin/bash
+v=$(apt-get dist-upgrade -s --quiet=2|grep ^Inst|wc -l)
+if [[ $v -ne 0 ]]; then 
+  echo $v updates pending;
+fi
