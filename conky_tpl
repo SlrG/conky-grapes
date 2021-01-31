@@ -33,9 +33,9 @@ conky.config = {
 	border_inner_margin = 0,
 	border_outer_margin = 0,
 
-	minimum_width = 520, 
+	minimum_width = 540, 
     minimum_height = 600,
-	maximum_width = 520,
+	maximum_width = 540,
 
 	alignment = 'top_right',
 	gap_x = 50,
@@ -74,8 +74,8 @@ conky.text = [[
 ## CPU ###################
 #{{ TEMPERATURE }}
 #{{ CPU }}
-${goto 50}${color1}${top name 2}${alignr 306}${top cpu 2}%
-${goto 50}${color1}${top name 3}${alignr 306}${top cpu 3}%
+${goto 50}${color1}${top name 2}${alignr 326}${top cpu 2}%
+${goto 50}${color1}${top name 3}${alignr 326}${top cpu 3}%
 ${font Michroma:size=10}${color0}${goto 80}${voffset 4}CPU
 ## DISKIO ################
 #{{ DISKIO }}

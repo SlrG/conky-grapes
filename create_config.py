@@ -322,14 +322,14 @@ def write_batconf():
         filedata = filedata.replace('#{{ BATTERY }}', ''.join(batconf_conky))
         write_conf(filedata, dest_conky)
         new_block = "${font Michroma:bold:size=11}${color0}${goto 150}${voffset 30}${execi 60 cat /etc/issue.net}  ${machine}"
-        new_block += "\n${font}${color1}${goto 220}${voffset -2}${execi 300 "+working_dir+"cgucheck}"
+        new_block += "\n${font}${color1}${goto 220}${voffset -2}${execi 60 "+working_dir+"cgucheck}"
         filedata = read_conf(dest_conky)
         filedata = filedata.replace('#{{ OS }}', new_block)
         write_conf(filedata, dest_conky)
     else:
         # adjusting if no battery
         new_block = "${font Michroma:bold:size=11}${color0}${voffset 90}${alignc}${execi 60 cat /etc/issue.net}  ${machine}"
-        new_block += "\n${font}${color1}${voffset -2}${alignc}${execi 300 "+working_dir+"cgucheck}"
+        new_block += "\n${font}${color1}${voffset -2}${alignc}${execi 60 "+working_dir+"cgucheck}"
         filedata = read_conf(dest_conky)
         filedata = filedata.replace('#{{ OS }}', new_block)
         write_conf(filedata, dest_conky)
@@ -412,7 +412,7 @@ def write_fsconf_conky(fs):
                 .format(fs[cpt])
                 }
 
-        new_block = "${{goto 60}}${{voffset {voffset}}}{filesys}${{color1}}${{alignr 310}}${{fs_used {filesys}}} / ${{fs_size {filesys}}}\n".format(**data)
+        new_block = "${{goto 60}}${{voffset {voffset}}}{filesys}${{color1}}${{alignr 330}}${{fs_used {filesys}}} / ${{fs_size {filesys}}}\n".format(**data)
         conf.append(new_block)
 
     log.info('adjusting voffset for FS...')
@@ -501,7 +501,7 @@ def write_cpuconf_conky(cpunb):
     for cpt in range (cpunb):
         data = { 'voffset': voffset, 'cpu': "{}".format(cpt+1)}
 
-        new_block = "${{voffset {voffset}}}${{goto 120}}${{color1}}CPU {cpu}${{alignr 330}}${{color1}}${{cpu cpu{cpu}}}%\n".format(**data)
+        new_block = "${{voffset {voffset}}}${{goto 120}}${{color1}}CPU {cpu}${{alignr 350}}${{color1}}${{cpu cpu{cpu}}}%\n".format(**data)
         cpuconf.append(new_block)
 
     log.info('adjusting voffset for top cpu processes...')
@@ -511,9 +511,9 @@ def write_cpuconf_conky(cpunb):
         adjust = 28 - (voffset * cpunb)
 
     if old:
-        new_block = "${{goto 50}}${{voffset {0}}}${{color1}}${{top name 1}}${{alignr 306}}${{top cpu 1}}%".format(adjust)
+        new_block = "${{goto 50}}${{voffset {0}}}${{color1}}${{top name 1}}${{alignr 326}}${{top cpu 1}}%".format(adjust)
     else:
-        new_block = "${{goto 49}}${{voffset 12}}${{color1}}${{top name 1}}${{alignr 306}}${{top cpu 1}}%".format(adjust)
+        new_block = "${{goto 49}}${{voffset 12}}${{color1}}${{top name 1}}${{alignr 326}}${{top cpu 1}}%".format(adjust)
 
     cpuconf.append(new_block)
 
@@ -538,19 +538,19 @@ def write_diskioconf_conky():
 
     # top io wait processes
     # First line, fixed vertical alignment
-    new_block = "${voffset -123}${goto 378}${font}${color1}${top_io name 1}${alignr -20}${top_io io_write 1}%\n"
-    ioconf.append(new_block)
-
-    for cpt in range (2,4):
-        data = { 'voffset': voffset, 'io': "{}".format(cpt)}
-        new_block = "${{goto 378}}${{voffset {voffset}}}${{color1}}${{top_io name {io}}}${{alignr -20}}${{top_io io_write {io}}}%\n".format(**data)
-        ioconf.append(new_block)
-
     if old:
-        new_block = "${goto 370}${voffset 8}${color1}disk writes${alignr -20}${diskio_write}%\n${goto 370}${color1}disk reads${alignr -20}${diskio_read}%\n${font Michroma:size=10}${color0}${goto 418}${voffset 2}IO WAIT"
+        new_block = "${voffset -92}${font Michroma:size=10}${color0}${goto 428}${voffset 2}IO TOP\n${goto 360}${voffset 8}${font}${color1}disk writes${alignr 14}${diskio_write}\n${goto 360}${color1}disk reads${alignr 14}${diskio_read}\n"
     else:
-        new_block = "${goto 370}${voffset 4}${color1}disk writes${alignr -20}${diskio_write}%\n${goto 370}${color1}disk reads${alignr -20}${diskio_read}%\n${font Michroma:size=10}${color0}${goto 418}${voffset 1}IO WAIT\n"
+        new_block = "${voffset -92}${font Michroma:size=10}${color0}${goto 428}${voffset 2}IO TOP\n${goto 360}${voffset 4}${font}${color1}disk writes${alignr 14}${diskio_write}\n${goto 360}${color1}disk reads${alignr 14}${diskio_read}\n"
     ioconf.append(new_block)
+	
+    new_block = "${voffset 7}${goto 378}${font}${color1}${top_io name 3}${alignr 0}${top_io io_perc 3}%\n"
+    ioconf.append(new_block)
+
+    for cpt in range (2,0,-1):
+        data = { 'voffset': voffset, 'io': "{}".format(cpt)}
+        new_block = "${{goto 378}}${{voffset {voffset}}}${{color1}}${{top_io name {io}}}${{alignr 0}}${{top_io io_perc {io}}}%\n".format(**data)
+        ioconf.append(new_block)
 
     log.info('Writing IO conky config in config file')
     filedata = read_conf(dest_conky)
@@ -564,7 +564,7 @@ def write_tempconf_conky(temperature):
     tempconf = []
 
     log.info('Starting Temperature config')
-    new_block = "${voffset 12}${color1}${goto 106}${freq_g cpu0} Ghz${alignr 330}${hwmon " + temperature['number_hwmon'] + " temp " + temperature['number_temp'] + "} °C"
+    new_block = "${voffset 12}${color1}${goto 106}${freq_g cpu0} Ghz${alignr 350}${hwmon " + temperature['number_hwmon'] + " temp " + temperature['number_temp'] + "} °C"
     tempconf.append(new_block)
     log.info("temperature = {}".format(tempconf))
 
@@ -620,9 +620,9 @@ def write_memconf_conky():
     # top memory processes
     log.info('Starting Memory config')
     if old:
-        new_block = "${font Michroma:size=10}${color0}${goto 404}${voffset 80}MEMORY\n${font}${goto 324}${voffset -4}${color1}${top_mem name 1}${alignr 35}${top_mem mem 1}%\n"
+        new_block = "${voffset -35}${font Michroma:size=10}${color0}${goto 404}${voffset 80}MEMORY\n${font}${goto 324}${voffset -4}${color1}${top_mem name 1}${alignr 35}${top_mem mem 1}%\n"
     else:
-        new_block = "${font Michroma:size=10}${color0}${goto 404}${voffset 60}MEMORY\n${font}${goto 324}${voffset -4}${color1}${top_mem name 1}${alignr 35}${top_mem mem 1}%\n"
+        new_block = "${voffset -35}${font Michroma:size=10}${color0}${goto 404}${voffset 60}MEMORY\n${font}${goto 324}${voffset -4}${color1}${top_mem name 1}${alignr 35}${top_mem mem 1}%\n"
 
     memconf.append(new_block)
 
@@ -742,9 +742,9 @@ def write_timeconf_conky():
     # top timeory processes
     log.info('Starting Time config')
     if old:
-        new_block = "${font Michroma:size=10}${alignr 300}${voffset -30}${color0}${time %a} ${color0}${time %x}\n${font Michroma:size=18}${alignr 318}${color1}${voffset -4}${time %H}:${time %M}"
+        new_block = "${font Michroma:size=10}${alignr 320}${voffset -30}${color0}${time %a} ${color0}${time %x}\n${font Michroma:size=18}${alignr 338}${color1}${voffset -4}${time %H}:${time %M}"
     else:
-        new_block = "${font Michroma:size=10}${alignr 300}${voffset -40}${color0}${time %a} ${color0}${time %x}\n${font Michroma:size=18}${alignr 312}${color1}${voffset -4}${time %H}:${time %M}"
+        new_block = "${font Michroma:size=10}${alignr 320}${voffset -40}${color0}${time %a} ${color0}${time %x}\n${font Michroma:size=18}${alignr 332}${color1}${voffset -4}${time %H}:${time %M}"
 
     timeconf.append(new_block)
 

@@ -33,9 +33,9 @@ conky.config = {
 	border_inner_margin = 0,
 	border_outer_margin = 0,
 
-	minimum_width = 520, 
+	minimum_width = 540, 
     minimum_height = 600,
-	maximum_width = 520,
+	maximum_width = 540,
 
 	alignment = 'top_right',
 	gap_x = 50,
@@ -72,25 +72,25 @@ conky.config = {
 
 conky.text = [[
 ## CPU ###################
-${voffset 12}${color1}${goto 106}${freq_g cpu0} Ghz${alignr 330}${hwmon 1 temp 1} °C
-${voffset 1}${goto 120}${color1}CPU 1${alignr 330}${color1}${cpu cpu1}%
-${voffset 1}${goto 120}${color1}CPU 2${alignr 330}${color1}${cpu cpu2}%
-${voffset 1}${goto 120}${color1}CPU 3${alignr 330}${color1}${cpu cpu3}%
-${voffset 1}${goto 120}${color1}CPU 4${alignr 330}${color1}${cpu cpu4}%
-${goto 49}${voffset 12}${color1}${top name 1}${alignr 306}${top cpu 1}%
-${goto 50}${color1}${top name 2}${alignr 306}${top cpu 2}%
-${goto 50}${color1}${top name 3}${alignr 306}${top cpu 3}%
+${voffset 12}${color1}${goto 106}${freq_g cpu0} Ghz${alignr 350}${hwmon 1 temp 1} °C
+${voffset 1}${goto 120}${color1}CPU 1${alignr 350}${color1}${cpu cpu1}%
+${voffset 1}${goto 120}${color1}CPU 2${alignr 350}${color1}${cpu cpu2}%
+${voffset 1}${goto 120}${color1}CPU 3${alignr 350}${color1}${cpu cpu3}%
+${voffset 1}${goto 120}${color1}CPU 4${alignr 350}${color1}${cpu cpu4}%
+${goto 49}${voffset 12}${color1}${top name 1}${alignr 326}${top cpu 1}%
+${goto 50}${color1}${top name 2}${alignr 326}${top cpu 2}%
+${goto 50}${color1}${top name 3}${alignr 326}${top cpu 3}%
 ${font Michroma:size=10}${color0}${goto 80}${voffset 4}CPU
 ## DISKIO ################
-${voffset -123}${goto 378}${font}${color1}${top_io name 1}${alignr -20}${top_io io_write 1}%
-${goto 378}${voffset 1}${color1}${top_io name 2}${alignr -20}${top_io io_write 2}%
-${goto 378}${voffset 1}${color1}${top_io name 3}${alignr -20}${top_io io_write 3}%
-${goto 370}${voffset 4}${color1}disk writes${alignr -20}${diskio_write}%
-${goto 370}${color1}disk reads${alignr -20}${diskio_read}%
-${font Michroma:size=10}${color0}${goto 418}${voffset 1}IO WAIT
+${voffset -92}${font Michroma:size=10}${color0}${goto 428}${voffset 2}IO TOP
+${goto 360}${voffset 4}${font}${color1}disk writes${alignr 14}${diskio_write}
+${goto 360}${color1}disk reads${alignr 14}${diskio_read}
+${voffset 7}${goto 378}${font}${color1}${top_io name 3}${alignr 0}${top_io io_perc 3}%
+${goto 378}${voffset 1}${color1}${top_io name 2}${alignr 0}${top_io io_perc 2}%
+${goto 378}${voffset 1}${color1}${top_io name 1}${alignr 0}${top_io io_perc 1}%
 
 ## MEMORY ################
-${font Michroma:size=10}${color0}${goto 404}${voffset 60}MEMORY
+${voffset -35}${font Michroma:size=10}${color0}${goto 404}${voffset 60}MEMORY
 ${font}${goto 324}${voffset -4}${color1}${top_mem name 1}${alignr 35}${top_mem mem 1}%
 ${goto 324}${color1}${top_mem name 2}${alignr 35}${top_mem mem 2}%
 ${goto 324}${color1}${top_mem name 3}${alignr 35}${top_mem mem 3}%
@@ -98,9 +98,9 @@ ${voffset 20}${goto 348}${color1}SWAP${alignr 35}${color1}${swap} / ${color1}${s
 ${voffset 1}${goto 348}${color1}RAM ${alignr 35}${color1}${mem} / ${color1}${memmax}
 
 ## FILESYSTEMS #################
-${goto 60}${voffset -83}/${color1}${alignr 310}${fs_used /} / ${fs_size /}
-${goto 60}${voffset -1}/boot/efi${color1}${alignr 310}${fs_used /boot/efi} / ${fs_size /boot/efi}
-${goto 60}${voffset -1}/home${color1}${alignr 310}${fs_used /home} / ${fs_size /home}
+${goto 60}${voffset -83}/${color1}${alignr 330}${fs_used /} / ${fs_size /}
+${goto 60}${voffset -1}/boot/efi${color1}${alignr 330}${fs_used /boot/efi} / ${fs_size /boot/efi}
+${goto 60}${voffset -1}/home${color1}${alignr 330}${fs_used /home} / ${fs_size /home}
 ${font Michroma:size=10}${color0}${goto 100}${voffset 8}FILESYSTEM
 ## INTERNET ################
 ${font Michroma:size=10}${color0}${voffset 26}${goto 324}INTERNET INFO
@@ -112,8 +112,8 @@ ${goto 300}${voffset 0}Public IP${goto 370}${execi 3600 wget -q -O - checkip.dyn
 ${voffset -24}
 
 ## TIME ########################
-${font Michroma:size=10}${alignr 300}${voffset -40}${color0}${time %a} ${color0}${time %x}
-${font Michroma:size=18}${alignr 312}${color1}${voffset -4}${time %H}:${time %M}
+${font Michroma:size=10}${alignr 320}${voffset -40}${color0}${time %a} ${color0}${time %x}
+${font Michroma:size=18}${alignr 332}${color1}${voffset -4}${time %H}:${time %M}
 ## BATTERY #####################
 ${font Michroma:size=10}${color0}${goto 296}${voffset 38}BATTERY
 ${font}${color1}${goto 270}${voffset -22}${color1}${execi 60 acpi|head -c 12|tail -c 1}
@@ -122,5 +122,5 @@ ${font}${color1}${goto 280}${color1}${execi 60 acpi|grep -Po '(?<=(: )).*?(?=, )
 ${font}${color1}${goto 280}${color1}${battery_time}
 ## OS
 ${font Michroma:bold:size=11}${color0}${goto 150}${voffset 30}${execi 60 cat /etc/issue.net}  ${machine}
-${font}${color1}${goto 220}${voffset -2}${execi 300 /home/michael/.conky/conky-grapes/cgucheck}
+${font}${color1}${goto 220}${voffset -2}${execi 60 /home/michael/.conky/conky-grapes/cgucheck}
 ]];
